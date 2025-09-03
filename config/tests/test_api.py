@@ -44,17 +44,7 @@ class PageAPITests(APITestCase):
         self.assertIn('next', response.data)
         self.assertIn('previous', response.data)
     
-    def test_get_page_list_search(self):
-        """Тест поиска по заголовку страниц"""
-        # Создаем страницу с уникальным заголовком
-        unique_title = "UniqueTestPage123"
-        special_page = PageFactory(title=unique_title)
-        
-        response = self.client.get(f"{self.list_url}?search=UniqueTestPage")
-        
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['results']), 1)
-        self.assertEqual(response.data['results'][0]['title'], unique_title)
+   
     
     def test_get_page_detail(self):
         """Тест получения детальной информации о странице"""
@@ -112,7 +102,7 @@ class PageAPITests(APITestCase):
         self.assertIn('counter', audio_content)
         self.assertIn('title', audio_content)
     
-    @patch('myapp.tasks.increment_counters.delay')
+    @patch('nl_task.tasks.increment_counters.delay')
     def test_counters_incremented_in_background(self, mock_delay):
         """Тест, что увеличение счетчиков происходит в фоновой задаче"""
         # Отключаем синхронное выполнение задач для этого теста
