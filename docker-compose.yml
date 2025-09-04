@@ -18,6 +18,18 @@ services:
     networks:
       - app_network
 
+  server:
+    build:
+      context: .
+    command: gunicorn config.wsgi:application --bind 0.0.0.0:8000 -w 2
+    restart: unless-stopped
+    
+    container_name: server
+    # depends_on:
+    #   - redis
+    networks:
+      - app_network
+
   redis:
     image: redis:7-alpine
     container_name: app_redis
@@ -29,27 +41,7 @@ services:
     networks:
       - app_network
 
-  app:
-    build: .
-    container_name: app_django
-    command: >
-      sh -c "python manage.py wait_for_db &&
-             python manage.py migrate &&
-             python manage.py collectstatic --noinput &&
-             python manage.py runserver"
-  #          #  gunicorn your_project.wsgi:application --bind 0.0.0.0:8000 --workers 3"
-    volumes:
-      - .:/app
-      - static_volume:/app/staticfiles
-    
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
-      - redis
-    restart: unless-stopped
-    networks:
-      - app_network
+
 
   celery_worker:
     build: .
@@ -59,35 +51,15 @@ services:
       - .:/app
     
     depends_on:
-      - db
-      - redis
-      - app
+      - server
     restart: unless-stopped
     networks:
       - app_network
 
-  # celery_beat:
-  #   build: .
-  #   container_name: app_celery_beat
-  #   command: celery -A your_project beat --loglevel=info
-  #   volumes:
-  #     - .:/app
-  #   environment:
-  #     - DATABASE_URL=mysql://app_user:app_password@mysql:3306/app_db
-  #     - CELERY_BROKER_URL=redis://redis:6379/0
-  #     - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  #   depends_on:
-  #     - mysql
-  #     - redis
-  #     - app
-  #   restart: unless-stopped
-  #   networks:
-  #     - app_network
 
 volumes:
-  db_data_d:
+  # psql_data:
   redis_data:
-  static_volume:
 
 networks:
   app_network:

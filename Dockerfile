@@ -1,33 +1,20 @@
-FROM python:3.12-alpine
+FROM python:3.12-slim
 
 
-# RUN apt-get update && apt-get install -y \
-#     gcc \
-#     default-libmysqlclient-dev \
-#     pkg-config \
-#     && rm -rf /var/lib/apt/lists/*
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
-COPY requirements.txt .
-RUN pip install --upgrade pip
-RUN pip install --no-cache-dir -r requirements.txt
 
+# install dependencies
+COPY ./requirements.txt .
+RUN pip install --no-cache --upgrade pip
+RUN pip install --no-cache -r requirements.txt
+RUN pip install --no-cache gunicorn
+
+# copy django project
 COPY . .
 
-# Создание скрипта для ожидания базы данных
-# RUN echo '#!/bin/bash\n\
-# while ! nc -z mysql 3306; do\n\
-#   echo "Waiting for MySQL..."\n\
-#   sleep 1\n\
-# done\n\
-# echo "MySQL is up!"' > /wait_for_db.sh && chmod +x /wait_for_db.sh
 
-# RUN apt-get update && apt-get install -y netcat-traditional && rm -rf /var/lib/apt/lists/*
-
-# # Создание псевдонима для wait_for_db
-# RUN echo '#!/bin/bash\n\
-# /wait_for_db.sh\n\
-# exec "$@"' > /entrypoint.sh && chmod +x /entrypoint.sh
-
-# ENTRYPOINT ["/entrypoint.sh"]
+EXPOSE 8000
