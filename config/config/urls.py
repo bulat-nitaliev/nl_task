@@ -15,14 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-# from nl_task.views import PageListAPIView, PageDetailAPIView
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from nl_task.views import PageViewSet
 
-
+router = DefaultRouter()
+router.register(r'pages', PageViewSet, basename='page')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('pages/', PageListAPIView.as_view(), name='page-list'),
+    path('api/', include(router.urls)),
     # path('pages/<int:pk>/', PageDetailAPIView.as_view(), name='page-detail'),
 ]
 

@@ -34,6 +34,9 @@ class Page(models.Model):
 
     def __str__(self):
         return self.title
+    
+    class Meta:
+        ordering = ['id']  # Добавляем сортировку по умолчанию
 
 class PageContent(models.Model):
     page = models.ForeignKey(Page, on_delete=models.CASCADE, verbose_name="Страница")
