@@ -16,13 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from nl_task.views import PageListAPIView, PageDetailAPIView
+# from nl_task.views import PageListAPIView, PageDetailAPIView
 
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pages/', PageListAPIView.as_view(), name='page-list'),
-    path('pages/<int:pk>/', PageDetailAPIView.as_view(), name='page-detail'),
+    # path('pages/', PageListAPIView.as_view(), name='page-list'),
+    # path('pages/<int:pk>/', PageDetailAPIView.as_view(), name='page-detail'),
 ]
 
